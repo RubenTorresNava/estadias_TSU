@@ -2,6 +2,7 @@ import express from 'express';
 import { connection } from './config/db.js';
 import EmpleadosRoute from './routes/empleados.route.js';
 import UsuariosRoute from './routes/usuarios.route.js';
+import EquposRoute from './routes/equipo.route.js'; 
 
 const app = express();
 
@@ -16,4 +17,5 @@ app.get('/', (req, res) => {
 app.use(express.json());
 app.use(EmpleadosRoute);
 app.use(UsuariosRoute);
+app.use(EquposRoute);
 
