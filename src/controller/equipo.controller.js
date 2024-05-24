@@ -79,9 +79,10 @@ export const buscarEquipoNombre = async (req, res) => {
 
 //buscar un equipo por estado
 export const buscarEquipoEstado = async (req, res) => {
-    const { estado } = req.body;
+    const { nombre } = req.body;
     try {
-        const [rows] = await connection.query('SELECT * FROM equipo WHERE estado_equipo = ?', [estado]);
+        const [rows] = await connection.query('SELECT e.id AS equipo_id, e.nombre AS nombre_equipo, e.descripcion, e.fecha_adquisision, es.id AS estado_id, es.nombre AS estado_nombre FROM equipo e JOIN estadoequipo es ON e.estado_equipo_id = es.id WHERE es.nombre = ?', [nombre]
+        );
         if (rows.length === 0) {
             res.json({ message: 'Equipo no encontrado' });
         }
@@ -94,9 +95,9 @@ export const buscarEquipoEstado = async (req, res) => {
 
 //buscar un equipo por fecha de adquisicion
 export const buscarEquipoFecha = async (req, res) => {
-    const { fecha } = req.body;
+    const { fecha_adquisision } = req.body;
     try {
-        const [rows] = await connection.query('SELECT * FROM equipo WHERE fecha_adquisision = ?', [fecha]);
+        const [rows] = await connection.query('SELECT * FROM equipo WHERE fecha_adquisision = ?', [fecha_adquisision]);
         if (rows.length === 0) {
             res.json({ message: 'Equipo no encontrado' });
         }
@@ -109,9 +110,9 @@ export const buscarEquipoFecha = async (req, res) => {
 
 //actualizar el estado de un equipo
 export const actualizarEstado = async (req, res) => {
-    const { id, estado_equipo } = req.body;
+    const { id, estado_equipo_id } = req.body;
     try {
-        const [rows] = await connection.query('UPDATE equipo SET estado_equipo = ? WHERE id = ?', [estado_equipo, id]);
+        const [rows] = await connection.query('UPDATE equipo SET estado_equipo_id = ? WHERE id = ?', [estado_equipo_id, id]);
         res.json({ message: 'Estado actualizado' });
     } catch (error) {
         res.json({ message: error });
