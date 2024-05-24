@@ -1,4 +1,4 @@
-import { connection } from "../config/db";
+import { connection } from "../config/db.js";
 
 //seleccionar todas las bitacoras
 export const obtenerBitacoras = async (req, res) => {
