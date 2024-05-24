@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as bitacoraCtrl from "../controllers/bitacora.controller.js";
+import * as bitacoraCtrl from "../controller/bitacora.controller.js";
 
 const router = Router();
 
