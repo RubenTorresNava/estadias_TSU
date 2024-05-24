@@ -3,7 +3,7 @@ import { connection } from "../config/db.js";
 //seleccionar todas las asignaciones
 export const obtenerAsignaciones = async (req, res) => {
     try {
-        const [rows] = await connection.query('SELECT * FROM asignaciones');
+        const [rows] = await connection.query('SELECT a.id AS asignacion_id, e.nombre AS nombre_equipo, emp.nombre AS nombre_empleado, u.nombre AS nombre_usuario, a.fecha_asignacion FROM asignaciones a JOIN equipo e ON a.id_equipo = e.id JOIN empleados emp ON a.id_empleado = emp.id JOIN usuarios u ON a.id_usuario = u.id');
         res.json(rows);
     } catch (error) {
         res.json({ message: error });
@@ -15,7 +15,8 @@ export const obtenerAsignaciones = async (req, res) => {
 export const obtenerAsignacionID = async (req, res) => {
     const { id } = req.body;
     try {
-        const [rows] = await connection.query('SELECT * FROM asignaciones WHERE id = ?', [id]);
+        const [rows] = await connection.query('SELECT a.id AS asignacion_id, e.nombre AS nombre_equipo, emp.nombre AS nombre_empleado, u.nombre AS nombre_usuario, a.fecha_asignacion FROM asignaciones a JOIN equipo e ON a.id_equipo = e.id JOIN empleados emp ON a.id_empleado = emp.id JOIN usuarios u ON a.id_usuario = u.id WHERE a.id = ?', [id]
+    );
         if (rows.length === 0) {
             res.json({ message: 'Asignacion no encontrada' });
         }
@@ -62,3 +63,47 @@ export const agregarAsignacion = async (req, res) => {
     }
 }
 
+//seleccionar una asignacion por nombre del equipo
+export const obtenerAsignacionEquipo = async (req, res) => {
+    const { nombre } = req.body;
+    try {
+        const [rows] = await connection.query('SELECT a.id AS asignacion_id, e.nombre AS nombre_equipo, emp.nombre AS nombre_empleado, u.nombre AS nombre_usuario, a.fecha_asignacion FROM asignaciones a JOIN equipo e ON a.id_equipo = e.id JOIN empleados emp ON a.id_empleado = emp.id JOIN usuarios u ON a.id_usuario = u.id WHERE e.nombre = ?', [nombre]);
+        if (rows.length === 0) {
+            res.json({ message: 'Asignacion no encontrada' });
+        }
+        res.json(rows);
+    } catch (error) {
+        res.json({ message: error });
+        console.log(error);
+    }
+}
+
+//seleccionar una asignacion por nombre del empleado
+export const obtenerAsignacionEmpleado = async (req, res) => {
+    const { nombre } = req.body;
+    try {
+        const [rows] = await connection.query('SELECT a.id AS asignacion_id, e.nombre AS nombre_equipo, emp.nombre AS nombre_empleado, u.nombre AS nombre_usuario, a.fecha_asignacion FROM asignaciones a JOIN equipo e ON a.id_equipo = e.id JOIN empleados emp ON a.id_empleado = emp.id JOIN usuarios u ON a.id_usuario = u.id WHERE emp.nombre = ?', [nombre]);
+        if (rows.length === 0) {
+            res.json({ message: 'Asignacion no encontrada' });
+        }
+        res.json(rows);
+    } catch (error) {
+        res.json({ message: error });
+        console.log(error);
+    }
+}
+
+//seleccionar una asignacion por nombre del usuario
+export const obtenerAsignacionUsuario = async (req, res) => {
+    const { nombre } = req.body;
+    try {
+        const [rows] = await connection.query('SELECT a.id AS asignacion_id, e.nombre AS nombre_equipo, emp.nombre AS nombre_empleado, u.nombre AS nombre_usuario, a.fecha_asignacion FROM asignaciones a JOIN equipo e ON a.id_equipo = e.id JOIN empleados emp ON a.id_empleado = emp.id JOIN usuarios u ON a.id_usuario = u.id WHERE u.nombre = ?', [nombre]);
+        if (rows.length === 0) {
+            res.json({ message: 'Asignacion no encontrada' });
+        }
+        res.json(rows);
+    } catch (error) {
+        res.json({ message: error });
+        console.log(error);
+    }
+}

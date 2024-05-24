@@ -5,8 +5,11 @@ const router = Router();
 
 router.get('/asignaciones', asignacionesCtrl.obtenerAsignaciones);
 router.post('/asignaciones', asignacionesCtrl.agregarAsignacion);
-router.get('/asignaciones/asginacion', asignacionesCtrl.obtenerAsignacionID);
+router.get('/asignaciones/asiginacion', asignacionesCtrl.obtenerAsignacionID);
 router.delete('/asignaciones/asignacion', asignacionesCtrl.borrarAsignacion);
 router.put('/asignaciones/asignacion', asignacionesCtrl.actualizarAsignacion);
+router.get('/asignaciones/empleado', asignacionesCtrl.obtenerAsignacionEmpleado);
+router.get('/asignaciones/equipo', asignacionesCtrl.obtenerAsignacionEquipo);
+router.get('/asignaciones/usuario', asignacionesCtrl.obtenerAsignacionUsuario);
 
 export default router;  
