@@ -5,6 +5,7 @@ import UsuariosRoute from './routes/usuarios.route.js';
 import EquposRoute from './routes/equipo.route.js';
 import EstadosRoute from './routes/estados.route.js';
 import AsignacionesRoute from './routes/asignaciones.route.js';
+import BitacoraRoute from './routes/bitacora.route.js';
 
 const app = express();
 
@@ -22,4 +23,4 @@ app.use(UsuariosRoute);
 app.use(EquposRoute);
 app.use(EstadosRoute);
 app.use(AsignacionesRoute);
-
+app.use(BitacoraRoute);
