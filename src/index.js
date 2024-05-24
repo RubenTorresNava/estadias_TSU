@@ -4,6 +4,7 @@ import EmpleadosRoute from './routes/empleados.route.js';
 import UsuariosRoute from './routes/usuarios.route.js';
 import EquposRoute from './routes/equipo.route.js';
 import EstadosRoute from './routes/estados.route.js';
+import AsignacionesRoute from './routes/asignaciones.route.js';
 
 const app = express();
 
@@ -20,3 +21,5 @@ app.use(EmpleadosRoute);
 app.use(UsuariosRoute);
 app.use(EquposRoute);
 app.use(EstadosRoute);
+app.use(AsignacionesRoute);
+
