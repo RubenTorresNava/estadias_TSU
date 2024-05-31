@@ -5,7 +5,7 @@ const router = Router();
 
 router.get('/asignaciones', asignacionesCtrl.obtenerAsignaciones);
 router.post('/asignaciones', asignacionesCtrl.agregarAsignacion);
-router.get('/asignaciones/asiginacion', asignacionesCtrl.obtenerAsignacionID);
+router.get('/asignaciones/asignacion', asignacionesCtrl.obtenerAsignacionID);
 router.delete('/asignaciones/asignacion', asignacionesCtrl.borrarAsignacion);
 router.put('/asignaciones/asignacion', asignacionesCtrl.actualizarAsignacion);
 router.get('/asignaciones/empleado', asignacionesCtrl.obtenerAsignacionEmpleado);
