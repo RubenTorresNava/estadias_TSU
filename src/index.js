@@ -6,8 +6,10 @@ import EquposRoute from './routes/equipo.route.js';
 import EstadosRoute from './routes/estados.route.js';
 import AsignacionesRoute from './routes/asignaciones.route.js';
 import BitacoraRoute from './routes/bitacora.route.js';
+import morgan from 'morgan';
 
 const app = express();
+app.use(morgan('dev'));
 
 app.listen(3000, () => {
   console.log('Servidor corriendo en el puerto 3000');

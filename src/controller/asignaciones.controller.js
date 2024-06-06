@@ -55,7 +55,7 @@ export const actualizarAsignacion = async (req, res) => {
 export const agregarAsignacion = async (req, res) => {
     const { id_equipo, id_usuario, fecha_asignacion, } = req.body;
     try {
-        const [rows] = await connection.query('INSERT INTO asignaciones (id_equipo, id_usuario, fecha_asignacion) VALUES (?, ?, ?, ?)', [id_equipo, id_usuario, fecha_asignacion]);
+        const [rows] = await connection.query('INSERT INTO asignaciones (id_equipo, id_usuario, fecha_asignacion) VALUES (?, ?, ?)', [id_equipo, id_usuario, fecha_asignacion]);
         res.json({ message: 'Asignacion agregada' });
     } catch (error) {
         res.json({ message: error });

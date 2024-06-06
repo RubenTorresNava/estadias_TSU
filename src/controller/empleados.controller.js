@@ -62,8 +62,7 @@ export const borrarEmpleado = async (req, res) => {
 export const actualizarEmpleado = async (req, res) => {
     const { id, nombre, email, cargo } = req.body;
     try{
-        const [ rows ] = await connection.query('UPDATE empleados SET nombre = ?, email = ?, cargo = ? WHERE id = ?',
-        [nombre, email, cargo, id]);
+        const [ rows ] = await connection.query('UPDATE empleados SET nombre = ?, email = ?, cargo = ? WHERE id = ?',[nombre, email, cargo, id]);
         if(rows.affectedRows > 0){
             res.json({ message: 'Empleado actualizado' });
         }else{
