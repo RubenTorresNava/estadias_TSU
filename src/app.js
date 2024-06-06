@@ -16,6 +16,12 @@ app.get('/', (req, res) => {
     res.send('Hola mundo');
 });
 
+app.use((req, res, next) => {
+    res.status(400).json({
+        error: 'Pagina no encontrada'
+    });
+})
+
 app.use(express.json());
 app.use(EmpleadosRoute);
 app.use(UsuariosRoute);
