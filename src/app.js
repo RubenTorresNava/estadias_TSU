@@ -1,5 +1,6 @@
 import express from 'express';
 import morgan from 'morgan';
+import cors from 'cors';
 import { connection } from './config/db.js';
 import EmpleadosRoute from './routes/empleados.route.js';
 import UsuariosRoute from './routes/usuarios.route.js';
@@ -8,7 +9,7 @@ import EstadosRoute from './routes/estados.route.js';
 import AsignacionesRoute from './routes/asignaciones.route.js';
 import BitacoraRoute from './routes/bitacora.route.js';
 
-
+app.use(cors());
 const app = express();
 app.use(morgan('dev'));
 
