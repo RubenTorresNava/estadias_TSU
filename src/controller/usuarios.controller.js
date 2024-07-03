@@ -56,10 +56,22 @@ export const borrarUsuario = async (req, res) => {
 
 //actualizar un usuario
 export const actualizarUsuario = async (req, res) => {
-    const { id, email, password } = req.body;
+    const { id,nombre, email, password } = req.body;
     try {
-        const [rows] = await connection.query('UPDATE usuarios SET email = ?, password = ? WHERE id = ?', [email, password, id]);
+        const [rows] = await connection.query('UPDATE usuarios SET nombre = ?, email = ?, password = ? WHERE id = ?', [nombre, email, password, id]);
         res.json({ message: 'Usuario actualizado' });
+    } catch (error) {
+        res.json({ message: error });
+        console.log(error);
+    }
+}
+
+//crear un usuario
+export const crearUsuario = async (req, res) => {
+    const { nombre  , email, password } = req.body;
+    try {
+        const [rows] = await connection.query('INSERT INTO usuarios (nombre, email, password) VALUES (?, ?, ?)', [nombre, email, password]);
+        res.json({ message: 'Usuario creado' });
     } catch (error) {
         res.json({ message: error });
         console.log(error);

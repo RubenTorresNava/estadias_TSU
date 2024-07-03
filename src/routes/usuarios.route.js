@@ -8,5 +8,6 @@ router.get('/usuarios/usuario', usuariosCtrl.obtenerUsuarioID)
 router.get('/usuarios', usuariosCtrl.obtenerUsuarios);
 router.delete('/usuarios', usuariosCtrl.borrarUsuario);
 router.put('/usuarios', usuariosCtrl.actualizarUsuario);
+router.post('/usuarios/register', usuariosCtrl.crearUsuario);
 
 export default router;
