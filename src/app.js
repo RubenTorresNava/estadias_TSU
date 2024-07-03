@@ -9,8 +9,9 @@ import EstadosRoute from './routes/estados.route.js';
 import AsignacionesRoute from './routes/asignaciones.route.js';
 import BitacoraRoute from './routes/bitacora.route.js';
 
-app.use(cors());
+
 const app = express();
+app.use(cors());
 app.use(morgan('dev'));
 
 app.get('/', (req, res) => {
