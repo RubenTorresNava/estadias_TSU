@@ -1,15 +1,16 @@
 import { connection } from '../config/db.js';
+import jwt from 'jsonwebtoken';
 
-//login
+//login de usuario usando jwt 
 export const login = async (req, res) => {
     const { email, password } = req.body;
     try {
         const [rows] = await connection.query('SELECT * FROM usuarios WHERE email = ? AND password = ?', [email, password]);
-        if (rows.length > 0) {
-            res.json({ message: 'Usuario encontrado' });
-        } else {
+        if (rows.length === 0) {
             res.json({ message: 'Usuario no encontrado' });
         }
+        const token = jwt.sign({ id: rows[0].id, email: rows[0].email }, 'secretkey');
+        res.json({ message: 'Usuario logueado', token });
     } catch (error) {
         res.json({ message: error });
         console.log(error);
@@ -76,4 +77,18 @@ export const crearUsuario = async (req, res) => {
         res.json({ message: error });
         console.log(error);
     }
+}
+
+//cerrar sesion de usuario y eliminar token
+export const cerrarSesion = async (req, res) =>  {
+    const token = req.headers['x-access-token'];
+    if (!token) {
+        res.json({ message: 'Token no proporcionado' });
+    }
+    jwt.verify(token, 'secretkey', (error, decoded) => {
+        if (error) {
+            res.json({ message: error });
+        }
+        res.json({ message: 'Sesion cerrada' });
+    });
 }
