@@ -107,3 +107,18 @@ export const obtenerAsignacionUsuario = async (req, res) => {
         console.log(error);
     }
 }
+
+//obtener una asignacion por id desde la url
+    export const obtenerAsignacionIDURL = async (req, res) => {
+        const { id } = req.params;
+        try {
+            const [rows] = await connection.query('SELECT a.id AS asignacion_id, e.nombre AS nombre_equipo, emp.nombre AS nombre_empleado, u.nombre AS nombre_usuario, a.fecha_asignacion FROM asignaciones a JOIN equipo e ON a.id_equipo = e.id JOIN empleados emp ON a.id_empleado = emp.id JOIN usuarios u ON a.id_usuario = u.id WHERE a.id = ?', [id]);
+            if (rows.length === 0) {
+                res.json({ message: 'Asignacion no encontrada' });
+            }
+            res.json(rows);
+        } catch (error) {
+            res.json({ message: error });
+            console.log(error);
+        }
+    }

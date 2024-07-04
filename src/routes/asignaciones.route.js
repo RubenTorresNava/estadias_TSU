@@ -11,5 +11,5 @@ router.put('/asignaciones/asignacion', asignacionesCtrl.actualizarAsignacion);
 router.get('/asignaciones/empleado', asignacionesCtrl.obtenerAsignacionEmpleado);
 router.get('/asignaciones/equipo', asignacionesCtrl.obtenerAsignacionEquipo);
 router.get('/asignaciones/usuario', asignacionesCtrl.obtenerAsignacionUsuario);
-
+router.get('/asignaciones/:id', asignacionesCtrl.obtenerAsignacionIDURL);
 export default router;  
