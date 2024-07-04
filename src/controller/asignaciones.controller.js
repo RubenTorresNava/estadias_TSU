@@ -122,3 +122,15 @@ export const obtenerAsignacionUsuario = async (req, res) => {
             console.log(error);
         }
     }
+//actualizar una asignacion por id desde la url
+export const actualizarAsignacionIDURL = async (req, res) => {
+    const { id } = req.params;
+    const { id_equipo, id_usuario, id_empleado, fecha_asignacion } = req.body;
+    try {
+        const [rows] = await connection.query('UPDATE asignaciones SET id_equipo = ?, id_empleado=?, id_usuario = ?, fecha_asignacion = ? WHERE id = ?', [id_equipo, id_usuario, id_empleado, fecha_asignacion, id]);
+        res.json({ message: 'Asignacion actualizada' });
+    } catch (error) {
+        res.json({ message: error });
+        console.log(error);
+    }
+}
