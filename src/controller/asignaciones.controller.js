@@ -27,9 +27,9 @@ export const obtenerAsignacionID = async (req, res) => {
     }
 }
 
-//borrar una asignacion
+//borrar una asignacion por id desde la url
 export const borrarAsignacion = async (req, res) => {
-    const { id } = req.body;
+    const { id } = req.params;
     try {
         const [rows] = await connection.query('DELETE FROM asignaciones WHERE id = ?', [id]);
         res.json({ message: 'Asignacion eliminada' });
