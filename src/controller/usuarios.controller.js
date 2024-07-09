@@ -7,16 +7,16 @@ export const login = async (req, res) => {
     try{
         const [rows] = await connection.query('SELECT * FROM usuarios WHERE email = ? AND password = ?', [email, password]);
         if (rows.length === 0) {
-            res.json({ message: 'Usuario no encontrado' });
+               return res.status(404).json({ message: 'Usuario no encontrado' });
         }
         const token = jwt.sign({ id: rows[0].id }, 'secretkey', {
             expiresIn: 60 * 60 * 24
         });
-        res.json({ message: 'Usuario logueado', token: token });
+        return res.status(200).json({ message: 'Usuario logueado', token: token });
     } catch (error) {
         res.json({ message: error });
         console.log(error);
-    }
+    }                       
 }
 
 //seleccionar un usuario por id
