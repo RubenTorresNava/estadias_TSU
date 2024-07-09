@@ -4,13 +4,15 @@ import jwt from 'jsonwebtoken';
 //login de usuario usando jwt 
 export const login = async (req, res) => {
     const { email, password } = req.body;
-    try {
+    try{
         const [rows] = await connection.query('SELECT * FROM usuarios WHERE email = ? AND password = ?', [email, password]);
         if (rows.length === 0) {
             res.json({ message: 'Usuario no encontrado' });
         }
-        const token = jwt.sign({ id: rows[0].id, email: rows[0].email }, 'secretkey');
-        res.json({ message: 'Usuario logueado', token });
+        const token = jwt.sign({ id: rows[0].id }, 'secretkey', {
+            expiresIn: 60 * 60 * 24
+        });
+        res.json({ message: 'Usuario logueado', token: token });
     } catch (error) {
         res.json({ message: error });
         console.log(error);
