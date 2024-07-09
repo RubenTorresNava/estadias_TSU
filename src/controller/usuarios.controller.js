@@ -10,8 +10,10 @@ export const login = async (req, res) => {
                return res.status(404).json({ message: 'Usuario no encontrado' });
         }
         const token = jwt.sign({ id: rows[0].id }, 'secretkey', {
-            expiresIn: 60 * 60 * 24
+            expiresIn: 60 * 60 *     24
         });
+        //datos del usuario logueado
+        console.log(rows);
         return res.status(200).json({ message: 'Usuario logueado', token: token });
     } catch (error) {
         res.json({ message: error });
