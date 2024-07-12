@@ -4,6 +4,10 @@ import { connection } from "../config/db.js";
 export const obtenerAsignaciones = async (req, res) => {
     try {
         const [rows] = await connection.query('SELECT a.id AS asignacion_id, e.nombre AS nombre_equipo, emp.nombre AS nombre_empleado, u.nombre AS nombre_usuario, a.fecha_asignacion FROM asignaciones a JOIN equipo e ON a.id_equipo = e.id JOIN empleados emp ON a.id_empleado = emp.id JOIN usuarios u ON a.id_usuario = u.id');
+        //obtener la fecha en formato dd-mm-aaaa
+        rows.forEach((row) => {
+            row.fecha_asignacion = new Date(row.fecha_asignacion).toLocaleDateString();
+        });
         res.json(rows);
     } catch (error) {
         res.json({ message: error });
@@ -44,6 +48,9 @@ export const agregarAsignacion = async (req, res) => {
             if (rows.length === 0) {
                 res.json({ message: 'Asignacion no encontrada' });
             }
+            rows.forEach((row) => {
+                row.fecha_asignacion = new Date(row.fecha_asignacion).toLocaleDateString();
+            });
             res.json(rows);
         } catch (error) {
             res.json({ message: error });
