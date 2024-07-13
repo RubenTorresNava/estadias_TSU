@@ -39,3 +39,20 @@ export const obtenerEmpleadoIDURL = async (req, res) => {
         console.log(error);
     }
 }
+
+//Actualizar empleado desde la url
+export const actualizarEmpleado = async (req, res) => {
+    const { id } = req.params;
+    const { nombre, email, cargo } = req.body;
+    try{
+        const [ rows ] = await connection.query('UPDATE empleados SET nombre = ?, email = ?, cargo = ? WHERE id = ?',
+        [nombre, email, cargo, id]);
+        if(rows.affectedRows === 0){
+            return res.json({ message: 'Empleado no encontrado' });
+        }
+        res.json({ message: 'Empleado actualizado' });
+    }catch(error){
+        res.json({ message: error });
+        console.log(error);
+    }
+}
