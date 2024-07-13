@@ -29,15 +29,24 @@ export const borrarAsignacion = async (req, res) => {
 
 //agregar una asignacion
 export const agregarAsignacion = async (req, res) => {
-    const { id_equipo, id_usuario, id_empleado, fecha_asignacion, } = req.body;
+    const { id_equipo, id_usuario, id_empleado, fecha_asignacion } = req.body;
+
+    // Convertir fecha de dd-mm-aaaa a aaaa-mm-dd
+    const partesFecha = fecha_asignacion.split('-');
+    if (partesFecha.length !== 3) {
+        return res.status(400).json({ message: 'Formato de fecha inválido' });
+    }
+    const fechaSQL = `${partesFecha[2]}-${partesFecha[1]}-${partesFecha[0]}`;
+
     try {
-        const [rows] = await connection.query('INSERT INTO asignaciones (id_equipo, id_empleado, id_usuario, fecha_asignacion) VALUES (?, ?, ?, ?)', [id_equipo, id_empleado,   id_usuario, fecha_asignacion]);
-        res.json({ message: 'Asignacion agregada' });
+        const [rows] = await connection.query('INSERT INTO asignaciones (id_equipo, id_empleado, id_usuario, fecha_asignacion) VALUES (?, ?, ?, ?)', [id_equipo, id_empleado, id_usuario, fechaSQL]);
+        res.json({ message: 'Asignación agregada correctamente' });
     } catch (error) {
-        res.json({ message: error });
-        console.log(error);
+        console.error('Error al agregar asignación:', error);
+        res.status(500).json({ message: 'Error interno del servidor' });
     }
 }
+
 
 
 //obtener una asignacion por id desde la url
@@ -61,8 +70,14 @@ export const agregarAsignacion = async (req, res) => {
 export const actualizarAsignacionIDURL = async (req, res) => {
     const { id } = req.params;
     const { id_equipo, id_usuario, id_empleado, fecha_asignacion } = req.body;
+        // Convertir fecha de dd-mm-aaaa a aaaa-mm-dd
+    const partesFecha = fecha_asignacion.split('-');
+    if (partesFecha.length !== 3) {
+        return res.status(400).json({ message: 'Formato de fecha inválido' });
+    }
+        const fechaSQL = `${partesFecha[2]}-${partesFecha[1]}-${partesFecha[0]}`;
     try {
-        const [rows] = await connection.query('UPDATE asignaciones SET id_equipo = ?, id_empleado=?, id_usuario = ?, fecha_asignacion = ? WHERE id = ?', [id_equipo, id_usuario, id_empleado, fecha_asignacion, id]);
+        const [rows] = await connection.query('UPDATE asignaciones SET id_equipo = ?, id_empleado=?, id_usuario = ?, fecha_asignacion = ? WHERE id = ?', [id_equipo, id_usuario, id_empleado, fechaSQL, id]);
         res.json({ message: 'Asignacion actualizada' });
     } catch (error) {
         res.json({ message: error });
