@@ -4,6 +4,9 @@ import { connection } from "../config/db.js";
 export const obtenerBitacoras = async (req, res) => {
     try {
         const [rows] = await connection.query('SELECT b.id AS bitacora_id, a.id AS asignacion_id, e.nombre AS nombre_equipo, u.nombre AS nombre_usuario, b.fecha, b.descripcion FROM bitacora b JOIN asignaciones a ON b.id_asignacion = a.id JOIN equipo e ON a.id_equipo = e.id JOIN usuarios u ON b.id_usuario = u.id');
+        rows.forEach((row) => {
+            row.fecha = new Date(row.fecha).toLocaleDateString();
+        });
         res.json(rows);
     } catch (error) {
         res.json({ message: error });
@@ -14,8 +17,14 @@ export const obtenerBitacoras = async (req, res) => {
 //agregar una bitacora
 export const agregarBitacora = async (req, res) => {
     const { fecha, descripcion, id_usuario, id_equipo, id_asignacion } = req.body;
+     // Convertir fecha de dd-mm-aaaa a aaaa-mm-dd
+     const partesFecha = fecha.split('-');
+     if (partesFecha.length !== 3) {
+         return res.status(400).json({ message: 'Formato de fecha inválido' });
+     }
+     const fechaSQL = `${partesFecha[2]}-${partesFecha[1]}-${partesFecha[0]}`;
     try {
-        const [rows] = await connection.query('INSERT INTO bitacora (fecha, descripcion, id_usuario, id_equipo, id_asignacion) VALUES (?, ?, ?, ?, ?)', [fecha, descripcion, id_usuario, id_equipo, id_asignacion]);
+        const [rows] = await connection.query('INSERT INTO bitacora (fecha, descripcion, id_usuario, id_equipo, id_asignacion) VALUES (?, ?, ?, ?, ?)', [fechaSQL, descripcion, id_usuario, id_equipo, id_asignacion]);
         res.json({ message: 'Bitacora agregada' });
     } catch (error) {
         res.json({ message: error });
