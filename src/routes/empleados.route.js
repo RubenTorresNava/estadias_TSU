@@ -7,4 +7,6 @@ router.post('/empleados', empleadosCtrl.insertarEmpleado);
 router.get('/empleados', empleadosCtrl.obtenerEmpleados);
 router.get('/empleados/:id', empleadosCtrl.obtenerEmpleadoIDURL);
 router.put('/empleados/:id', empleadosCtrl.actualizarEmpleado);
+router.delete('/empleados/:id', empleadosCtrl.eliminarEmpleado);
+
 export default router;

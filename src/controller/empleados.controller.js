@@ -56,3 +56,18 @@ export const actualizarEmpleado = async (req, res) => {
         console.log(error);
     }
 }
+
+//Eliminar empleado desde la url
+export const eliminarEmpleado = async (req, res) => {
+    const { id } = req.params;
+    try{
+        const [ rows ] = await connection.query('DELETE FROM empleados WHERE id = ?', [id]);
+        if(rows.affectedRows === 0){
+            return res.json({ message: 'Empleado no encontrado' });
+        }
+        res.json({ message: 'Empleado eliminado' });
+    }catch(error){
+        res.json({ message: error });
+        console.log(error);
+    }
+}
