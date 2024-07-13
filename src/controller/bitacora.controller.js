@@ -67,3 +67,17 @@ export const actualizarBitacora = async (req, res) => {
         return res.json({ message: error });
     }
 }
+
+//eliminar bitacora desde la url
+export const eliminarBitacora = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [rows] = await connection.query('DELETE FROM bitacora WHERE id = ?', [id]);
+        if (rows.affectedRows > 0) {
+            return res.json({ message: 'Bitacora eliminada' });
+        }
+        return res.json({ message: 'Bitacora no encontrada' });
+    } catch (error) {
+        return res.json({ message: error });
+    }
+}
