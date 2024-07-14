@@ -72,7 +72,7 @@ export const actualizarAsignacionIDURL = async (req, res) => {
     const { nombre_equipo, nombre_empleado, nombre_usuario, fecha_asignacion } = req.body;
 
     // Convertir fecha de dd-mm-aaaa a aaaa-mm-dd
-    const partesFecha = fecha_asignacion.split('-');
+    const partesFecha = fecha_asignacion.split('/');
     if (partesFecha.length !== 3) {
         return res.status(400).json({ message: 'Formato de fecha inválido' });
     }
