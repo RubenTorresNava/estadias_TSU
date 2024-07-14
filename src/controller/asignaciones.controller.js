@@ -1,19 +1,30 @@
 import { connection } from "../config/db.js";
+import { format } from "date-fns";
 
-//seleccionar todas las asignaciones
 export const obtenerAsignaciones = async (req, res) => {
     try {
-        const [rows] = await connection.query('SELECT a.id AS asignacion_id, e.nombre AS nombre_equipo, emp.nombre AS nombre_empleado, u.nombre AS nombre_usuario, a.fecha_asignacion FROM asignaciones a JOIN equipo e ON a.id_equipo = e.id JOIN empleados emp ON a.id_empleado = emp.id JOIN usuarios u ON a.id_usuario = u.id');
-        //obtener la fecha en formato dd-mm-aaaa
+        const [rows] = await connection.query(`
+            SELECT a.id AS asignacion_id, e.nombre AS nombre_equipo, 
+                   emp.nombre AS nombre_empleado, u.nombre AS nombre_usuario, 
+                   a.fecha_asignacion 
+            FROM asignaciones a 
+            JOIN equipo e ON a.id_equipo = e.id 
+            JOIN empleados emp ON a.id_empleado = emp.id 
+            JOIN usuarios u ON a.id_usuario = u.id
+        `);
+        
+        // Formatear la fecha a dd-MM-yyyy
         rows.forEach((row) => {
-            row.fecha_asignacion = new Date(row.fecha_asignacion).toLocaleDateString();
+            row.fecha_asignacion = format(new Date(row.fecha_asignacion), 'dd-MM-yyyy');
         });
+
         res.json(rows);
     } catch (error) {
-        res.json({ message: error });
+        res.status(500).json({ message: error.message });
         console.log(error);
     }
-}
+};
+
 
 //borrar una asignacion por id desde la url
 export const borrarAsignacion = async (req, res) => {
