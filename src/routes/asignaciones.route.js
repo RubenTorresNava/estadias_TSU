@@ -8,6 +8,5 @@ router.post('/asignaciones', asignacionesCtrl.agregarAsignacion);
 router.delete('/asignaciones/:id', asignacionesCtrl.borrarAsignacion);
 router.put('/asignaciones/:id', asignacionesCtrl.actualizarAsignacionIDURL);
 router.get('/asignaciones/:id', asignacionesCtrl.obtenerAsignacionIDURL);
-router.get('/asignaciones/asignacion/:id', asignacionesCtrl.obtenerAsignacionID);
 
 export default router;  

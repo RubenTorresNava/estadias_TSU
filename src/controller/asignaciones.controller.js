@@ -69,37 +69,37 @@ export const agregarAsignacion = async (req, res) => {
 //actualizar una asignacion por id desde la url
 export const actualizarAsignacionIDURL = async (req, res) => {
     const { id } = req.params;
-    const { id_equipo, id_usuario, id_empleado, fecha_asignacion } = req.body;
-        // Convertir fecha de dd-mm-aaaa a aaaa-mm-dd
+    const { nombre_equipo, nombre_empleado, nombre_usuario, fecha_asignacion } = req.body;
+
+    // Convertir fecha de dd-mm-aaaa a aaaa-mm-dd
     const partesFecha = fecha_asignacion.split('-');
     if (partesFecha.length !== 3) {
         return res.status(400).json({ message: 'Formato de fecha inválido' });
     }
-        const fechaSQL = `${partesFecha[2]}-${partesFecha[1]}-${partesFecha[0]}`;
-    try {
-        const [rows] = await connection.query('UPDATE asignaciones SET id_equipo = ?, id_empleado=?, id_usuario = ?, fecha_asignacion = ? WHERE id = ?', [id_equipo, id_usuario, id_empleado, fechaSQL, id]);
-        res.json({ message: 'Asignacion actualizada' });
-    } catch (error) {
-        res.json({ message: error });
-        console.log(error);
-    }
-}
+    const fechaSQL = `${partesFecha[2]}-${partesFecha[1]}-${partesFecha[0]}`;
 
-//obtener una asignacion por id desde la url
-export const obtenerAsignacionID = async (req, res) => {
-    const { id } = req.params;
     try {
-        const [rows] = await connection.query('SELECT * FROM asignaciones WHERE id = ?', [id]);
-        if (rows.length === 0) {
-            res.json({ message: 'Asignacion no encontrada' });
+        const query = `
+            UPDATE asignaciones a
+            JOIN equipo e ON a.id_equipo = e.id
+            JOIN empleados emp ON a.id_empleado = emp.id
+            JOIN usuarios u ON a.id_usuario = u.id
+            SET e.nombre = ?, emp.nombre = ?, u.nombre = ?, a.fecha_asignacion = ?
+            WHERE a.id = ?;
+        `;
+
+        const [result] = await connection.query(query, [nombre_equipo, nombre_empleado, nombre_usuario, fechaSQL, id]);
+
+        if (result.affectedRows > 0) {
+            res.json({ message: 'Asignación y nombres actualizados' });
+        } else {
+            res.status(404).json({ message: 'Asignación no encontrada' });
         }
-        rows.forEach((row) => {
-            row.fecha_asignacion = new Date(row.fecha_asignacion).toLocaleDateString();
-        });
-        res.json(rows);
     } catch (error) {
-        res.json({ message: error });
+        res.status(500).json({ message: error.message });
         console.log(error);
     }
-}
+};
+
+
                   
