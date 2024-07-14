@@ -85,4 +85,21 @@ export const actualizarAsignacionIDURL = async (req, res) => {
     }
 }
 
+//obtener una asignacion por id desde la url
+export const obtenerAsignacionID = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [rows] = await connection.query('SELECT * FROM asignaciones WHERE id = ?', [id]);
+        if (rows.length === 0) {
+            res.json({ message: 'Asignacion no encontrada' });
+        }
+        rows.forEach((row) => {
+            row.fecha_asignacion = new Date(row.fecha_asignacion).toLocaleDateString();
+        });
+        res.json(rows);
+    } catch (error) {
+        res.json({ message: error });
+        console.log(error);
+    }
+}
                   
