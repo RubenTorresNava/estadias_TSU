@@ -1,121 +1,103 @@
 import { connection } from "../config/db.js";
+import { format, parse } from "date-fns";
 
-//seleccionar todos los equipos
+
+//seleccionar todos los equipos y el estado de cada uno
 export const obtenerEquipos = async (req, res) => {
     try {
-        const [rows] = await connection.query('SELECT * FROM equipo');
-        res.json(rows);
+        const [rows] = await connection.query(`
+            SELECT 
+            e.id,
+            e.nombre,
+            e.descripcion,
+            e.fecha_adquisision,
+            es.nombre AS estado_nombre
+            FROM 
+            equipo e
+            JOIN 
+            estadoequipo es ON e.estado_equipo_id = es.id;
+        `);
+        rows.forEach((row) => {
+            row.fecha_adquisision = format(new Date(row.fecha_adquisision), 'dd-MM-yyyy');
+        });
+        return res.json(rows);
     } catch (error) {
-        res.json({ message: error });
-        console.log(error);
+        return res.json({ message: error });
     }
 }
 
-//seleccionar un equipo por id
-export const obtenerEquipoID = async (req, res) => {
-    const { id } = req.body;
+//seleccionar un equipo por su id
+export const obtenerEquipo = async (req, res) => {
     try {
-        const [rows] = await connection.query('SELECT * FROM equipo WHERE id = ?', [id]);
-        if (rows.length === 0) {
-            res.json({ message: 'Equipo no encontrado' });
-        }
-        res.json(rows);
+        const [rows] = await connection.query(`
+            SELECT 
+            e.id,
+            e.nombre,
+            e.descripcion,
+            e.fecha_adquisision,
+            es.nombre AS estado_nombre
+            FROM 
+            equipo e
+            JOIN 
+            estadoequipo es ON e.estado_equipo_id = es.id
+            WHERE 
+            e.id = ?;
+        `, [req.params.id]);
+        rows.forEach((row) => {
+            row.fecha_adquisision = format(new Date(row.fecha_adquisision), 'dd-MM-yyyy');
+        });
+        return res.json(rows);
     } catch (error) {
-        res.json({ message: error });
-        console.log(error);
-    }
-}
-
-//borrar un equipo
-export const borrarEquipo = async (req, res) => {
-    const { id } = req.body;
-    try {
-        const [rows] = await connection.query('DELETE FROM equipo WHERE id = ?', [id]);
-        res.json({ message: 'Equipo eliminado' });
-    } catch (error) {
-        res.json({ message: error });
-        console.log(error);
-    }
-}
-
-//actualizar un equipo
-export const actualizarEquipo = async (req, res) => {
-    const { id, nombre, descripcion, fecha_adquisision, estado_equipo_id } = req.body;
-    try {
-        const [rows] = await connection.query('UPDATE equipo SET nombre = ?, descripcion = ?, fecha_adquisision = ?, estado_equipo_id = ? WHERE id = ?', [nombre, descripcion, fecha_adquisision, estado_equipo_id, id]);
-        res.json({ message: 'Equipo actualizado' });
-    } catch (error) {
-        res.json({ message: error });
-        console.log(error);
+        return res.json({ message: error });
     }
 }
 
 //agregar un equipo
-export const agregarEquipo = async (req, res) => {
+        export const agregarEquipo = async (req, res) => {
+            const { nombre, descripcion, fecha_adquisision } = req.body;
+
+            // Convertir fecha de dd-MM-yyyy a yyyy-MM-dd
+            let fechaSQL;
+            try {
+                fechaSQL = format(parse(fecha_adquisision, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd');
+            } catch (error) {
+                return res.status(400).json({ message: 'Formato de fecha inválido' });
+            }
+
+            try {
+                const [rows] = await connection.query('INSERT INTO equipo (nombre, descripcion, fecha_adquisision) VALUES (?, ?, ?)', [nombre, descripcion, fechaSQL]);
+                return res.json({ message: 'Equipo agregado' });
+            } catch (error) {
+                return res.json({ message: error });
+            }
+        }
+
+//actualizar un equipo desde su url
+export const actualizarEquipo = async (req, res) => {
     const { nombre, descripcion, fecha_adquisision, estado_equipo_id } = req.body;
+
+    // Convertir fecha de dd-MM-yyyy a yyyy-MM-dd
+    let fechaSQL;
     try {
-        const [rows] = await connection.query('INSERT INTO equipo (nombre, descripcion, fecha_adquisision, estado_equipo_id) VALUES (?, ?, ?, ?)', [nombre, descripcion, fecha_adquisision, estado_equipo_id]);
-        res.json({ message: 'Equipo agregado' });
+        fechaSQL = format(parse(fecha_adquisision, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd');
     } catch (error) {
-        res.json({ message: error });
-        console.log(error);
+        return res.status(400).json({ message: 'Formato de fecha inválido' });
+    }
+
+    try {
+        const [rows] = await connection.query('UPDATE equipo SET nombre = ?, descripcion = ?, fecha_adquisision = ?, estado_equipo_id = ? WHERE id = ?', [nombre, descripcion, fechaSQL, estado_equipo_id, req.params.id]);
+        return res.json({ message: 'Equipo actualizado' });
+    } catch (error) {
+        return res.json({ message: error });
     }
 }
 
-//buscar un equipo por nombre
-export const buscarEquipoNombre = async (req, res) => {
-    const { nombre } = req.body;
+//eliminar un equipo desde su url
+export const eliminarEquipo = async (req, res) => {
     try {
-        const [rows] = await connection.query('SELECT * FROM equipo WHERE nombre = ?', [nombre]);
-        if (rows.length === 0) {
-            res.json({ message: 'Equipo no encontrado' });
-        }
-        res.json(rows);
+        const [rows] = await connection.query('DELETE FROM equipo WHERE id = ?', [req.params.id]);
+        return res.json({ message: 'Equipo eliminado' });
     } catch (error) {
-        res.json({ message: error });
-        console.log(error);
-    }
-}
-
-//buscar un equipo por estado
-export const buscarEquipoEstado = async (req, res) => {
-    const { nombre } = req.body;
-    try {
-        const [rows] = await connection.query('SELECT e.id AS equipo_id, e.nombre AS nombre_equipo, e.descripcion, e.fecha_adquisision, es.id AS estado_id, es.nombre AS estado_nombre FROM equipo e JOIN estadoequipo es ON e.estado_equipo_id_id = es.id WHERE es.nombre = ?', [nombre]
-        );
-        if (rows.length === 0) {
-            res.json({ message: 'Equipo no encontrado' });
-        }
-        res.json(rows);
-    } catch (error) {
-        res.json({ message: error });
-        console.log(error);
-    }
-}
-
-//buscar un equipo por fecha de adquisicion
-export const buscarEquipoFecha = async (req, res) => {
-    const { fecha_adquisision } = req.body;
-    try {
-        const [rows] = await connection.query('SELECT * FROM equipo WHERE fecha_adquisision = ?', [fecha_adquisision]);
-        if (rows.length === 0) {
-            res.json({ message: 'Equipo no encontrado' });
-        }
-        res.json(rows);
-    } catch (error) {
-        res.json({ message: error });
-        console.log(error);
-    }
-}
-
-//actualizar el estado de un equipo
-export const actualizarEstado = async (req, res) => {
-    const { id, estado_equipo_id_id } = req.body;
-    try {
-        const [rows] = await connection.query('UPDATE equipo SET estado_equipo_id_id = ? WHERE id = ?', [estado_equipo_id_id, id]);
-        res.json({ message: 'Estado actualizado' });
-    } catch (error) {
-        res.json({ message: error });
-        console.log(error);
+        return res.json({ message: error });
     }
 }
