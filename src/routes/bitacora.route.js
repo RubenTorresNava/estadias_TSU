@@ -3,10 +3,10 @@ import * as bitacoraCtrl from "../controller/bitacora.controller.js";
 
 const router = Router();
 
-router.post("/bitacoras", bitacoraCtrl.agregarBitacora);
-router.get("/bitacoras/:id", bitacoraCtrl.obtenerBitacoraIDURL);
-router.get("/bitacoras", bitacoraCtrl.obtenerBitacoras);
-router.put("/bitacoras/:id", bitacoraCtrl.actualizarBitacora);
-router.delete("/bitacoras/:id", bitacoraCtrl.eliminarBitacora);
+router.get('/bitacoras', bitacoraCtrl.obtenerBitacoras);
+router.get('/bitacoras/:id', bitacoraCtrl.obtenerBitacoraIDURL);
+router.put('/bitacoras/:id', bitacoraCtrl.actualizarBitacoraIDURL);
+router.delete('/bitacoras/:id', bitacoraCtrl.eliminarBitacoraIDURL);
+router.post('/bitacoras', bitacoraCtrl.crearBitacora);
 
 export default router;

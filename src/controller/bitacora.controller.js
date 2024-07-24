@@ -1,83 +1,139 @@
 import { connection } from "../config/db.js";
+import { format, parse } from "date-fns";
 
-//seleccionar todas las bitacoras
+//obtener todas las bitacoras
 export const obtenerBitacoras = async (req, res) => {
-    try {
-        const [rows] = await connection.query('SELECT b.id AS bitacora_id, a.id AS asignacion_id, e.nombre AS nombre_equipo, u.nombre AS nombre_usuario, b.fecha, b.descripcion FROM bitacora b JOIN asignaciones a ON b.id_asignacion = a.id JOIN equipo e ON a.id_equipo = e.id JOIN usuarios u ON b.id_usuario = u.id');
-        rows.forEach((row) => {
-            row.fecha = new Date(row.fecha).toLocaleDateString();
-        });
-        return res.json(rows);
-    } catch (error) {
-        return res.json({ message: error });
-    }
-}
+  try {
+    const [rows] = await connection.query(`
+        SELECT 
+        b.id,
+        b.fecha,
+        b.descripcion,
+        u.nombre AS nombre_usuario,
+        e.nombre AS nombre_equipo,
+        a.fecha_asignacion
+        FROM 
+        bitacora b
+        JOIN 
+        usuarios u ON b.id_usuario = u.id
+        JOIN 
+        equipo e ON b.id_equipo = e.id
+        JOIN 
+        asignaciones a ON b.id_asignacion = a.id;
+    `);
+    // Formatear la fecha a dd-MM-yyyy
+    rows.forEach((row) => {
+      row.fecha = format(new Date(row.fecha), 'dd-MM-yyyy');
+      row.fecha_asignacion = format(new Date(row.fecha_asignacion), 'dd-MM-yyyy');
+    });
 
-//agregar una bitacora
-export const agregarBitacora = async (req, res) => {
-    const { fecha, descripcion, id_usuario, id_equipo, id_asignacion } = req.body;
-     // Convertir fecha de dd-mm-aaaa a aaaa-mm-dd
-     const partesFecha = fecha.split('-');
-     if (partesFecha.length !== 3) {
-         return res.status(400).json({ message: 'Formato de fecha inválido' });
-     }
-     const fechaSQL = `${partesFecha[2]}-${partesFecha[1]}-${partesFecha[0]}`;
-    try {
-        const [rows] = await connection.query('INSERT INTO bitacora (fecha, descripcion, id_usuario, id_equipo, id_asignacion) VALUES (?, ?, ?, ?, ?)', [fechaSQL, descripcion, id_usuario, id_equipo, id_asignacion]);
-       return res.json({ message: 'Bitacora agregada' });
-    } catch (error) {
-        return res.json({ message: error });
-    }
-}
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
-//obtener bitacora por id desde la url
+//obtener una bitacora por id desde la url
 export const obtenerBitacoraIDURL = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const [rows] = await connection.query('SELECT b.id AS bitacora_id, a.id AS asignacion_id, e.nombre AS nombre_equipo, u.nombre AS nombre_usuario, b.fecha, b.descripcion FROM bitacora b JOIN asignaciones a ON b.id_asignacion = a.id JOIN equipo e ON a.id_equipo = e.id JOIN usuarios u ON b.id_usuario = u.id WHERE b.id = ?', [id]);
-        if (rows.length === 0) {
-            return res.json({ message: 'Bitacora no encontrada' });
-        }
-        rows.forEach((row) => {
-            row.fecha = new Date(row.fecha).toLocaleDateString();
-        });
-        res.json(rows);
-    } catch (error) {
-        return res.json({ message: error });
-    }
-}
+  const { id } = req.params;
+  try {
+    const [rows] = await connection.query(`
+        SELECT 
+        b.id,
+        b.fecha,
+        b.descripcion,
+        u.nombre AS nombre_usuario,
+        e.nombre AS nombre_equipo,
+        a.fecha_asignacion
+        FROM 
+        bitacora b
+        JOIN 
+        usuarios u ON b.id_usuario = u.id
+        JOIN 
+        equipo e ON b.id_equipo = e.id
+        JOIN 
+        asignaciones a ON b.id_asignacion = a.id
+        WHERE b.id = ?;
+    `, [id]);
 
-//actualizar bitacora desde la url
-export const actualizarBitacora = async (req, res) => {
-    const { id } = req.params;
-    const { fecha, descripcion, id_usuario, id_equipo, id_asignacion } = req.body;
-    // Convertir fecha de dd-mm-aaaa a aaaa-mm-dd
-    const partesFecha = fecha.split('-');
-    if (partesFecha.length !== 3) {
-        return res.status(400).json({ message: 'Formato de fecha inválido' });
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'Bitacora no encontrada' });
     }
-    const fechaSQL = `${partesFecha[2]}-${partesFecha[1]}-${partesFecha[0]}`;
-    try {
-        const [rows] = await connection.query('UPDATE bitacora SET fecha = ?, descripcion = ?, id_usuario = ?, id_equipo = ?, id_asignacion = ? WHERE id = ?', [fechaSQL, descripcion, id_usuario, id_equipo, id_asignacion, id]);
-        if (rows.affectedRows > 0) {
-            return res.json({ message: 'Bitacora actualizada' });
-        }
-        return res.json({ message: 'Bitacora no encontrada' });
-    } catch (error) {
-        return res.json({ message: error });
-    }
-}
 
-//eliminar bitacora desde la url
-export const eliminarBitacora = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const [rows] = await connection.query('DELETE FROM bitacora WHERE id = ?', [id]);
-        if (rows.affectedRows > 0) {
-            return res.json({ message: 'Bitacora eliminada' });
-        }
-        return res.json({ message: 'Bitacora no encontrada' });
-    } catch (error) {
-        return res.json({ message: error });
-    }
-}
+    // Formatear la fecha a dd-MM-yyyy
+    rows.forEach((row) => {
+      row.fecha = format(new Date(row.fecha), 'dd-MM-yyyy');
+      row.fecha_asignacion = format(new Date(row.fecha_asignacion), 'dd-MM-yyyy');
+    });
+
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+//actualizar una bitacora por id desde la url
+export const actualizarBitacoraIDURL = async (req, res) => {
+  const { id } = req.params;
+  const { fecha, descripcion, id_usuario, id_equipo, id_asignacion } = req.body;
+
+  // Convertir fecha de dd-MM-yyyy a yyyy-MM-dd
+  let fechaSQL;
+  try {
+    fechaSQL = format(parse(fecha, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd');
+  } catch (error) {
+    return res.status(400).json({ message: 'Formato de fecha inválido' });
+  }
+
+  try {
+    const query = `
+        UPDATE bitacora b
+        JOIN usuarios u ON b.id_usuario = u.id
+        JOIN equipo e ON b.id_equipo = e.id
+        JOIN asignaciones a ON b.id_asignacion = a.id
+        SET b.fecha = ?, b.descripcion = ?, b.id_usuario = ?, b.id_equipo = ?, b.id_asignacion = ?
+        WHERE b.id = ?;
+    `;
+
+    const [result] = await connection.query(query, [fechaSQL, descripcion, id_usuario, id_equipo, id_asignacion, id]);
+    res.json({ message: 'Bitacora actualizada' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+//eliminar una bitacora por id desde la url
+export const eliminarBitacoraIDURL = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [result] = await connection.query('DELETE FROM bitacora WHERE id = ?', [id]);
+    res.json({ message: 'Bitacora eliminada' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+//crear una bitacora
+export const crearBitacora = async (req, res) => {
+  const { fecha, descripcion, id_usuario, id_equipo, id_asignacion } = req.body;
+
+  // Convertir fecha de dd-MM-yyyy a yyyy-MM-dd
+  let fechaSQL;
+  try {
+    fechaSQL = format(parse(fecha, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd');
+  } catch (error) {
+    return res.status(400).json({ message: 'Formato de fecha inválido' });
+  }
+
+  try {
+    const query = `
+        INSERT INTO bitacora (fecha, descripcion, id_usuario, id_equipo, id_asignacion)
+        VALUES (?, ?, ?, ?, ?);
+    `;
+
+    const [result] = await connection.query(query, [fechaSQL, descripcion, id_usuario, id_equipo, id_asignacion]);
+    res.json({ message: 'Bitacora creada' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
