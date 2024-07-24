@@ -115,23 +115,14 @@ export const eliminarBitacoraIDURL = async (req, res) => {
 
 //crear una bitacora
 export const crearBitacora = async (req, res) => {
-  const { fecha, descripcion, id_usuario, id_equipo, id_asignacion } = req.body;
-
-  // Convertir fecha de dd-MM-yyyy a yyyy-MM-dd
-  let fechaSQL;
-  try {
-    fechaSQL = format(parse(fecha, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd');
-  } catch (error) {
-    return res.status(400).json({ message: 'Formato de fecha inválido' });
-  }
-
+  const { descripcion, id_usuario, id_equipo, id_asignacion } = req.body;
   try {
     const query = `
-        INSERT INTO bitacora (fecha, descripcion, id_usuario, id_equipo, id_asignacion)
-        VALUES (?, ?, ?, ?, ?);
+        INSERT INTO bitacora (descripcion, id_usuario, id_equipo, id_asignacion)
+        VALUES (?, ?, ?, ?);
     `;
 
-    const [result] = await connection.query(query, [fechaSQL, descripcion, id_usuario, id_equipo, id_asignacion]);
+    const [result] = await connection.query(query, [ descripcion, id_usuario, id_equipo, id_asignacion]);
     res.json({ message: 'Bitacora creada' });
   } catch (error) {
     res.status(500).json({ error: error.message });
