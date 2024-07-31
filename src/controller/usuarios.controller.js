@@ -10,7 +10,7 @@ export const login = async (req, res) => {
                return res.status(404).json({ message: 'Usuario no encontrado' });
         }
         const token = jwt.sign({ id: rows[0].id }, 'secretkey', {
-            expiresIn: 60 * 60 *     24
+            expiresIn: 60 * 60 * 24
         });
         //datos del usuario logueado
         console.log(rows);
@@ -69,3 +69,17 @@ export const actualizarPassword = async (req, res) => {
     }
 };
 
+//obtener datos de usuario logueado
+export const obtenerUsuario = async (req, res, verificarToken) => {
+    try {
+        const [rows] = await connection.query('SELECT * FROM usuarios WHERE id = ?', [req.userId]);
+        if (rows.length === 0) {
+          return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+        const user = rows[0];
+        res.status(200).json({ user });
+      } catch (error) {
+        console.error('Error al obtener los datos del usuario:', error);
+        res.status(500).json({ message: 'Error interno del servidor' });
+      }  
+};
