@@ -1,6 +1,6 @@
 import { connection } from '../config/db.js';
 import jwt from 'jsonwebtoken';
-
+    
 //login de usuario usando jwt 
 export const login = async (req, res) => {
     const { email, password } = req.body;
