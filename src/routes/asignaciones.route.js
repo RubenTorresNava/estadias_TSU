@@ -5,9 +5,9 @@ import verificarToken from "../middleware/token.middleware.js";
 const router = Router();
 
 router.get('/asignaciones', verificarToken, asignacionesCtrl.obtenerAsignaciones);
-router.post('/asignaciones', asignacionesCtrl.agregarAsignacion);
-router.delete('/asignaciones/:id', asignacionesCtrl.borrarAsignacion);
-router.put('/asignaciones/:id', asignacionesCtrl.actualizarAsignacionIDURL);
-router.get('/asignaciones/:id', asignacionesCtrl.obtenerAsignacionIDURL);
+router.post('/asignaciones', verificarToken, asignacionesCtrl.agregarAsignacion);
+router.delete('/asignaciones/:id', verificarToken, asignacionesCtrl.borrarAsignacion);
+router.put('/asignaciones/:id', verificarToken, asignacionesCtrl.actualizarAsignacionIDURL);
+router.get('/asignaciones/:id', verificarToken, asignacionesCtrl.obtenerAsignacionIDURL);
 
 export default router;  
