@@ -1,5 +1,6 @@
 import { connection } from '../config/db.js';
 import jwt from 'jsonwebtoken';
+import {SECRET_KEY} from '../config.js';
     
 //login de usuario usando jwt 
 export const login = async (req, res) => {
@@ -9,7 +10,7 @@ export const login = async (req, res) => {
         if (rows.length === 0) {
                return res.status(404).json({ message: 'Usuario no encontrado' });
         }
-        const token = jwt.sign({ id: rows[0].id }, 'secretkey', {
+        const token = jwt.sign({ id: rows[0].id }, SECRET_KEY, {
             expiresIn: 60 * 60 * 24
         });
         //datos del usuario logueado
