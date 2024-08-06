@@ -6,7 +6,7 @@ const router = Router();
 
 router.post('/usuarios/login', usuariosCtrl.login);
 router.post('/usuarios/register', usuariosCtrl.crearUsuario);
-router.post('/usuarios/logout', usuariosCtrl.cerrarSesion);
-router.put('/usuarios/upGradePass', usuariosCtrl.actualizarPassword);
+router.post('/usuarios/logout', verificarToken, usuariosCtrl.cerrarSesion);
+router.put('/usuarios/upGradePass', verificarToken, usuariosCtrl.actualizarPassword);
 router.get('/usuarios', verificarToken, usuariosCtrl.obtenerUsuario);
 export default router;
